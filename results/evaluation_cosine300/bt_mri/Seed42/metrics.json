@@ -1,0 +1,105 @@
+{
+  "dataset": "bt_mri",
+  "seed": "Seed42",
+  "checkpoint": "best_acc_bt_mri_GAMFusionNew_MLPGELUClassifier_FullDrop0p1_TwoStageLR_Cosine300_Seed42.pt",
+  "checkpoint_epoch": 238,
+  "validation_loss": 0.053644361679911545,
+  "validation_accuracy": 0.9947414548641542,
+  "test_loss": 0.023790676709441173,
+  "classes": [
+    "glioma",
+    "meningioma",
+    "notumor",
+    "pituitary"
+  ],
+  "metrics": {
+    "accuracy": 0.9954233409610984,
+    "precision": 0.9954549364216998,
+    "recall": 0.9954233409610984,
+    "f1_score": 0.9954180523909862,
+    "sensitivity": 0.9954233409610984,
+    "specificity": 0.9986183201694506,
+    "mcc": 0.9938733499558219,
+    "precision_macro": 0.9950990341697393,
+    "recall_macro": 0.995216049382716,
+    "f1_score_macro": 0.9951348479896447,
+    "sensitivity_macro": 0.995216049382716,
+    "specificity_macro": 0.9985104152826372,
+    "confusion_matrix": [
+      [
+        295,
+        4,
+        0,
+        1
+      ],
+      [
+        0,
+        306,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        404,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        300
+      ]
+    ],
+    "auc": 0.9999474415374378,
+    "auc_macro": 0.9999531666929005,
+    "classwise": {
+      "glioma": {
+        "precision": 0.9966216216216216,
+        "recall": 0.9833333333333333,
+        "f1_score": 0.9899328859060402,
+        "sensitivity": 0.9833333333333333,
+        "specificity": 0.9990108803165183,
+        "auc": 0.9999307616221562,
+        "support": 300
+      },
+      "meningioma": {
+        "precision": 0.9870967741935484,
+        "recall": 1.0,
+        "f1_score": 0.9935064935064936,
+        "sensitivity": 1.0,
+        "specificity": 0.9960199004975124,
+        "auc": 0.9999447208402433,
+        "support": 306
+      },
+      "notumor": {
+        "precision": 1.0,
+        "recall": 0.9975308641975309,
+        "f1_score": 0.9987639060568603,
+        "sensitivity": 0.9975308641975309,
+        "specificity": 1.0,
+        "auc": 0.9999536696372605,
+        "support": 405
+      },
+      "pituitary": {
+        "precision": 0.9966777408637874,
+        "recall": 1.0,
+        "f1_score": 0.9983361064891847,
+        "sensitivity": 1.0,
+        "specificity": 0.9990108803165183,
+        "auc": 0.9999835146719419,
+        "support": 300
+      }
+    }
+  },
+  "metrics_percent": {
+    "accuracy": 99.54233409610984,
+    "precision": 99.54549364216999,
+    "recall": 99.54233409610984,
+    "f1_score": 99.54180523909862,
+    "sensitivity": 99.54233409610984,
+    "specificity": 99.86183201694506,
+    "mcc": 99.3873349955822,
+    "auc": 99.99474415374378
+  }
+}

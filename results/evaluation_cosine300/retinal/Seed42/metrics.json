@@ -1,0 +1,105 @@
+{
+  "dataset": "retinal",
+  "seed": "Seed42",
+  "checkpoint": "best_acc_retinal_GAMFusionNew_MLPGELUClassifier_FullDrop0p1_TwoStageLR_Cosine300_Seed42.pt",
+  "checkpoint_epoch": 283,
+  "validation_loss": 0.49922539361575186,
+  "validation_accuracy": 0.9129746835443038,
+  "test_loss": 0.22407204300029618,
+  "classes": [
+    "cataract",
+    "diabetic_retinopathy",
+    "glaucoma",
+    "normal"
+  ],
+  "metrics": {
+    "accuracy": 0.95141065830721,
+    "precision": 0.9512669308086317,
+    "recall": 0.95141065830721,
+    "f1_score": 0.95125147101832,
+    "sensitivity": 0.95141065830721,
+    "specificity": 0.984008780459796,
+    "mcc": 0.9352452710790395,
+    "precision_macro": 0.9507395650916115,
+    "recall_macro": 0.9508074132694067,
+    "f1_score_macro": 0.9506857440467579,
+    "sensitivity_macro": 0.9508074132694067,
+    "specificity_macro": 0.9838548596917516,
+    "confusion_matrix": [
+      [
+        155,
+        0,
+        1,
+        3
+      ],
+      [
+        0,
+        166,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        140,
+        10
+      ],
+      [
+        8,
+        0,
+        8,
+        146
+      ]
+    ],
+    "auc": 0.9947106455321784,
+    "auc_macro": 0.992804024331855,
+    "classwise": {
+      "cataract": {
+        "precision": 0.9451219512195121,
+        "recall": 0.9748427672955975,
+        "f1_score": 0.9597523219814241,
+        "sensitivity": 0.9748427672955975,
+        "specificity": 0.9812108559498957,
+        "auc": 0.9962054069668203,
+        "support": 159
+      },
+      "diabetic_retinopathy": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1_score": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 1.0,
+        "auc": 1.0,
+        "support": 166
+      },
+      "glaucoma": {
+        "precision": 0.9395973154362416,
+        "recall": 0.9271523178807947,
+        "f1_score": 0.9333333333333333,
+        "sensitivity": 0.9271523178807947,
+        "specificity": 0.9815195071868583,
+        "auc": 0.9879788405836518,
+        "support": 151
+      },
+      "normal": {
+        "precision": 0.9182389937106918,
+        "recall": 0.9012345679012346,
+        "f1_score": 0.9096573208722741,
+        "sensitivity": 0.9012345679012346,
+        "specificity": 0.9726890756302521,
+        "auc": 0.9870318497769479,
+        "support": 162
+      }
+    }
+  },
+  "metrics_percent": {
+    "accuracy": 95.141065830721,
+    "precision": 95.12669308086316,
+    "recall": 95.141065830721,
+    "f1_score": 95.125147101832,
+    "sensitivity": 95.141065830721,
+    "specificity": 98.4008780459796,
+    "mcc": 93.52452710790395,
+    "auc": 99.47106455321784
+  }
+}

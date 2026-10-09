@@ -9,7 +9,7 @@ from .dataset import build_dataset
 
 
 def seed_worker(worker_id):
-    """Cố định NumPy và Python random bên trong mỗi DataLoader worker."""
+    """Seed NumPy and Python inside each DataLoader worker."""
     worker_seed = torch.initial_seed() % (2 ** 32)
     np.random.seed(worker_seed)
     random.seed(worker_seed)
@@ -23,16 +23,17 @@ def build_dataloaders(
     num_workers=0,
     seed=42,
 ):
-    """Tạo DataLoader cho train, validation và test."""
+    """Build reproducible training, validation, and test data loaders."""
     data_root = Path(data_root)
 
     train_dataset = build_dataset(data_root / "train", train_transform)
     val_dataset = build_dataset(data_root / "val", eval_transform)
     test_dataset = build_dataset(data_root / "test", eval_transform)
 
-    # Generator này điều khiển thứ tự shuffle của train set.
+    # This generator controls the training-set shuffle order.
     train_generator = torch.Generator()
     train_generator.manual_seed(seed)
+    pin_memory = torch.cuda.is_available()
 
     return {
         "train": DataLoader(
@@ -40,7 +41,7 @@ def build_dataloaders(
             batch_size=batch_size,
             shuffle=True,
             num_workers=num_workers,
-            pin_memory=True,
+            pin_memory=pin_memory,
             worker_init_fn=seed_worker,
             generator=train_generator,
         ),
@@ -49,14 +50,14 @@ def build_dataloaders(
             batch_size=batch_size,
             shuffle=False,
             num_workers=num_workers,
-            pin_memory=True,
+            pin_memory=pin_memory,
         ),
         "test": DataLoader(
             test_dataset,
             batch_size=batch_size,
             shuffle=False,
             num_workers=num_workers,
-            pin_memory=True,
+            pin_memory=pin_memory,
         ),
         "classes": train_dataset.classes,
         "train_generator": train_generator,

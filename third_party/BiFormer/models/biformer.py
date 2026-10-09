@@ -20,7 +20,7 @@ from einops import rearrange
 from einops.layers.torch import Rearrange
 from fairscale.nn.checkpoint import checkpoint_wrapper
 from timm.models import register_model
-from timm.models.layers import DropPath, to_2tuple, trunc_normal_
+from timm.layers import DropPath, to_2tuple, trunc_normal_
 from timm.models.vision_transformer import _cfg
 
 from ops.bra_legacy import BiLevelRoutingAttention

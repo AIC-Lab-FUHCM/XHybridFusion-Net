@@ -1,0 +1,43 @@
+{
+  "dataset": "retinal",
+  "data_root": "datasets/retinal",
+  "output_root": "outputs",
+  "run_name": "gam_cosine300_seed123",
+  "seed": 123,
+  "model": {
+    "image_size": 224,
+    "biformer_depth": 4,
+    "patch_size": 4,
+    "n_win": 7,
+    "topk": 4,
+    "use_pe": true,
+    "dropout": 0.1,
+    "mlp_dropout": 0.1,
+    "drop_path": 0.1,
+    "cnn_1": "densenet121",
+    "cnn_2": "efficientnet_b0",
+    "fusion": "gam",
+    "classifier": "mlp",
+    "pretrained": true,
+    "cnn_1_freeze_blocks": 0,
+    "cnn_2_freeze_blocks": 0
+  },
+  "training": {
+    "epochs": 300,
+    "batch_size": 32,
+    "num_workers": 0,
+    "first_stage_epochs": 50,
+    "first_stage_biformer_lr": 0.0001,
+    "first_stage_cnn_lr": 0.00001,
+    "first_stage_fusion_lr": 0.00001,
+    "first_stage_classifier_lr": 0.00001,
+    "second_stage_lr": 0.0001,
+    "min_lr": 0.000001,
+    "weight_decay": 0.0001,
+    "early_stopping": false,
+    "patience": 15,
+    "min_delta": 0.0001,
+    "resume": true,
+    "save_last_every": 25
+  }
+}

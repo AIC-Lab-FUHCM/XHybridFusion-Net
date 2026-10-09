@@ -14,11 +14,10 @@ from sklearn.preprocessing import label_binarize
 
 
 def calculate_metrics(labels, predictions, probabilities=None, class_names=None):
-    """Tính metric multiclass theo cách one-vs-rest.
+    """Calculate multiclass metrics using one-vs-rest definitions.
 
-    Precision, recall, F1, sensitivity và specificity chính dùng weighted
-    average để cách tổng hợp gần với bảng metric của bài EFFResNet-ViT.
-    Các giá trị macro vẫn được trả thêm để tiện đối chiếu.
+    The primary precision, recall, F1, sensitivity, and specificity values use
+    weighted averaging. Macro averages are also returned for comparison.
     """
     labels = np.asarray(labels)
     predictions = np.asarray(predictions)
@@ -90,7 +89,7 @@ def calculate_metrics(labels, predictions, probabilities=None, class_names=None)
         "f1_score": float(f1_score(
             labels, predictions, average="weighted", zero_division=0
         )),
-        # Trong multiclass one-vs-rest, sensitivity là recall.
+        # In multiclass one-vs-rest evaluation, sensitivity equals recall.
         "sensitivity": weighted_sensitivity,
         "specificity": weighted_specificity,
         "mcc": float(matthews_corrcoef(labels, predictions)),
@@ -112,7 +111,7 @@ def calculate_metrics(labels, predictions, probabilities=None, class_names=None)
     auc_per_class = [None] * number_of_classes
     if probabilities is not None:
         try:
-            # Bài báo trình bày ROC micro-average; giữ auc là giá trị micro.
+            # The primary AUC is the micro-average ROC AUC.
             metrics["auc"] = float(roc_auc_score(
                 binary_labels.ravel(), probabilities.ravel()
             ))

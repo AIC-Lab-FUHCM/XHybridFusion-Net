@@ -3,7 +3,7 @@ import torch
 
 @torch.no_grad()
 def evaluate(model, data_loader, criterion, device):
-    """Tính loss và lấy label/prediction để tính metric."""
+    """Compute loss and collect labels and predictions."""
     model.eval()
     total_loss = 0.0
     all_labels = []

@@ -2,7 +2,7 @@ from pathlib import Path
 import sys
 
 
-# Source gốc dùng import "models" và "ops" từ thư mục repository.
+# Upstream imports "models" and "ops" from the repository root.
 BIFORMER_ROOT = str(Path(__file__).resolve().parent)
 
 if BIFORMER_ROOT not in sys.path:

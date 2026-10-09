@@ -39,7 +39,7 @@ def save_training_checkpoint(
     scheduler=None,
     data_generator=None,
 ):
-    """Lưu trạng thái cuối epoch để tiếp tục train khi bị ngắt."""
+    """Save the complete state required to resume interrupted training."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     checkpoint = {
@@ -76,7 +76,7 @@ def load_training_checkpoint(
     scheduler=None,
     data_generator=None,
 ):
-    """Nạp model và optimizer để train tiếp từ epoch đã lưu."""
+    """Restore model, optimizer, scheduler, and random-number states."""
     checkpoint = torch.load(path, map_location=device, weights_only=False)
     model.load_state_dict(checkpoint["model_state_dict"])
     optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
@@ -84,7 +84,7 @@ def load_training_checkpoint(
     if scheduler is not None and "scheduler_state_dict" in checkpoint:
         scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
 
-    # Khôi phục đúng chuỗi shuffle, augmentation và dropout sau khi resume.
+    # Restore the shuffle, augmentation, and dropout random sequences.
     if "python_random_state" in checkpoint:
         random.setstate(checkpoint["python_random_state"])
     if "numpy_random_state" in checkpoint:

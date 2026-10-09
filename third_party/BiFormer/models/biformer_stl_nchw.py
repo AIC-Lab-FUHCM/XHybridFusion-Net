@@ -20,7 +20,7 @@ import torch.nn as nn
 from einops.layers.torch import Rearrange
 from fairscale.nn.checkpoint import checkpoint_wrapper
 from timm.models import register_model
-from timm.models.layers import DropPath, LayerNorm2d, to_2tuple, trunc_normal_
+from timm.layers import DropPath, LayerNorm2d, to_2tuple, trunc_normal_
 
 from ops.bra_nchw import nchwBRA
 from ._common import nchwAttentionLePE

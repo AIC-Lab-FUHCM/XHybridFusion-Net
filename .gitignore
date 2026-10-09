@@ -1,16 +1,30 @@
-# Environment variables and local secrets
-.env
-.env.*
-!.env.example
-!.env.template
-
-# Python virtual environments
-.venv/
-venv/
-env/
-ENV/
-
-# Python cache files
+# Python
 __pycache__/
 *.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
+# Environments and editors
+.venv/
+venv/
+.env
+.idea/
+.vscode/
+
+# Datasets and model artifacts
+raw_data/
+datasets/
+checkpoints/
+checkpoint_qtrong*/
+outputs/
+*.pt
+*.pth
+*.ckpt
+*.tar
+*.zip
+
+# OS files
+.DS_Store
+Thumbs.db

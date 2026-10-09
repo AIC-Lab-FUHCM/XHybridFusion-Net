@@ -17,7 +17,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from fairscale.nn.checkpoint import checkpoint_wrapper
 from timm.models import register_model
-from timm.models.layers import LayerNorm2d, to_2tuple, trunc_normal_
+from timm.layers import LayerNorm2d, to_2tuple, trunc_normal_
 # from timm.models.maxxvit import MaxxVitTransformerCfg, PartitionAttention2d
 from timm.models.maxxvit import (Attention2d, ConvMlp, DropPath, LayerScale2d,
                                  MaxxVitTransformerCfg, get_act_layer,
