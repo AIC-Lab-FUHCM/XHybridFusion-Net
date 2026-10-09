@@ -1,33 +1,27 @@
-# BiFormer-GAM for Medical Image Classification
+# BiFormer-GAM Medical Image Classification
 
-PyTorch implementation of a medical image classifier evaluated on retinal
-fundus images and brain-tumor MRI. The network uses a BiFormer encoder,
-parallel DenseNet121 and EfficientNet-B0 backbones, GAM feature fusion,
-global average pooling, and a GELU MLP classifier.
+PyTorch implementation for four-class retinal disease and brain-tumor MRI
+classification.
 
-This release intentionally contains only the architecture used by the supplied
-experiments. Alternative ResNet, EfficientNet-B1, concatenation, gated,
-cross-attention, and ReLU-MLP implementations were removed to keep the codebase
-small and unambiguous.
-
-## Architecture
+## Model
 
 ```text
-Input image [B, 3, 224, 224]
-  -> BiFormer encoder (4 blocks, patch size 4, n_win 7, top-k 4)
-  -> reconstructed image [B, 3, 224, 224]
-  -> DenseNet121 [B, 1024, 7, 7]
-     + EfficientNet-B0 [B, 1280, 7, 7]
-  -> concatenate [B, 2304, 7, 7]
-  -> GAM channel attention
-  -> GAM spatial attention
-  -> 1x1 Conv + BatchNorm + ReLU [B, 768, 7, 7]
-  -> tokens [B, 49, 768]
-  -> global average pooling [B, 768]
-  -> MLP: 768 -> 1024 -> 512 -> number of classes
+Input -> BiFormer (4 blocks) -> DenseNet121 + EfficientNet-B0
+      -> GAM Fusion -> Global Average Pooling -> GELU MLP -> Prediction
 ```
 
-## Repository structure
+Default input size is `224 x 224`. GAM produces 49 tokens with 768 features.
+
+Main configuration:
+
+- BiFormer: 4 blocks, patch size 4, `n_win=7`, `topk=4`.
+- CNN backbones: ImageNet-pretrained DenseNet121 and EfficientNet-B0.
+- Fusion: channel attention, spatial attention, and 1x1 output projection.
+- Classifier: `768 -> 1024 -> 512 -> 4` with GELU.
+- Dropout and drop path: 0.1.
+- Training: 300 epochs, batch size 32, AdamW, and cosine annealing.
+
+## Project structure
 
 ```text
 .
@@ -36,37 +30,13 @@ Input image [B, 3, 224, 224]
 |-- explain.py
 |-- visualize_intermediate_feature_maps.py
 |-- split_data.py
-|-- requirements.txt
 |-- configs/
 |-- data/
 |-- model/
-|-- results/
 |-- utils/
+|-- results/
 `-- third_party/BiFormer/
 ```
-
-Datasets, checkpoints, raw training outputs, archives, and Python cache files
-are excluded through `.gitignore`. Curated evaluation and explainability
-figures in `results/` are tracked.
-
-## Datasets
-
-### Retinal
-
-- Source: https://www.kaggle.com/datasets/gunavenkatdoddi/eye-diseases-classification
-- Classes: cataract, diabetic retinopathy, glaucoma, normal
-- Split used here: 70% train, 15% validation, 15% test
-- Related source/patient images identified by the filename convention remain
-  in the same split.
-
-### BT-MRI
-
-- Source: https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset/versions/1
-- Classes: glioma, meningioma, no tumor, pituitary
-- The official Testing folder remains unchanged.
-- The original Training folder is divided into 80% train and 20% validation.
-
-Do not commit the downloaded datasets to this repository.
 
 ## Installation
 
@@ -74,64 +44,64 @@ Do not commit the downloaded datasets to this repository.
 python -m pip install -r requirements.txt
 ```
 
-The code was designed for Python, PyTorch, and CUDA environments supported by
-the versions declared in `requirements.txt`.
+## Data
 
-## Data preparation
+### Retinal
 
-Retinal:
+- Source: [Eye Diseases Classification on Kaggle](https://www.kaggle.com/datasets/gunavenkatdoddi/eye-diseases-classification)
+- Classes: cataract, diabetic retinopathy, glaucoma, normal
+- Split used here: 70% train, 15% validation, 15% test
+- Related source/patient images identified by the filename convention remain
+  in the same split.
+
+### BT-MRI
+
+- Source: [Brain Tumor MRI Dataset on Kaggle](https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset/versions/1)
+- Classes: glioma, meningioma, no tumor, pituitary
+- The official Testing folder remains unchanged.
+- The original Training folder is divided into 80% train and 20% validation.
+
+Expected structure:
+
+```text
+datasets/<dataset>/
+|-- train/<class>/
+|-- val/<class>/
+`-- test/<class>/
+```
+
+Use `split_data.py` to prepare the datasets.
 
 ```bash
 python split_data.py \
   --dataset retinal \
-  --source raw_data/retinal/dataset \
+  --source /path/to/raw/retinal \
   --output datasets/retinal \
   --seed 4242
-```
 
-BT-MRI:
-
-```bash
 python split_data.py \
   --dataset bt_mri \
-  --source raw_data/bt_mri \
+  --source /path/to/raw/bt_mri \
   --output datasets/bt_mri \
   --seed 142
 ```
 
-Expected layout:
-
-```text
-datasets/<dataset>/
-|-- train/<class names>/
-|-- val/<class names>/
-`-- test/<class names>/
-```
+Training augmentation includes resize, color jitter, horizontal/vertical
+flips, optional ±90-degree rotation, and RGB scaling to `[0, 1]`.
 
 ## Training
 
-Six reproducible experiment configurations are stored in `configs/`.
-
 ```bash
 python train.py --config configs/retinal_seed42.json
-python train.py --config configs/retinal_seed123.json
-python train.py --config configs/retinal_seed456.json
-
 python train.py --config configs/bt_mri_seed42.json
-python train.py --config configs/bt_mri_seed123.json
-python train.py --config configs/bt_mri_seed456.json
 ```
 
-For Colab data copied to local runtime storage, override the path without
-editing source code:
+Configs for seeds `42`, `123`, and `456` are provided. Training saves
+`best_accuracy.pt`, `best_loss.pt`, and `last.pt` under `outputs/`.
 
-```bash
-python train.py \
-  --config configs/retinal_seed42.json \
-  --data-root /content/datasets/retinal
-```
-
-Each run writes:
+Training uses AdamW and a two-stage learning-rate schedule. During the first
+50 epochs, BiFormer uses `1e-4` while both pretrained CNNs, GAM, and the MLP
+use `1e-5`. All modules then use `1e-4` with cosine annealing to `1e-6`.
 
 ```text
 outputs/<dataset>/<run_name>/
@@ -140,111 +110,69 @@ outputs/<dataset>/<run_name>/
 |   |-- best_loss.pt
 |   `-- last.pt
 `-- results/
-    |-- metrics_best_accuracy.json
-    `-- metrics_best_loss.json
 ```
 
-Training automatically resumes from `last.pt`. Pass `--no-resume` to start a
-new run in an empty output directory. The last checkpoint is updated every 25
-epochs; best-loss and best-accuracy checkpoints are updated whenever the
-validation result improves.
+Training resumes automatically from `last.pt`. Use `--no-resume` to disable
+resume behavior.
 
 ## Evaluation
 
-Evaluation reports Accuracy, Precision, Recall, F1-score, Sensitivity,
-Specificity, MCC, and micro-average AUC. It also generates a confusion matrix,
-ROC curves, and precision-recall curves.
-
 ```bash
 python evaluate.py \
   --config configs/retinal_seed42.json \
-  --checkpoint outputs/retinal/gam_cosine300_seed42/checkpoints/best_accuracy.pt
+  --checkpoint /path/to/best_accuracy.pt \
+  --data-root /path/to/retinal
 ```
 
-To evaluate an existing checkpoint while the dataset is in Colab storage:
+Reported metrics include Accuracy, Precision, Recall, F1-score, Sensitivity,
+Specificity, MCC, and AUC.
 
-```bash
-python evaluate.py \
-  --config configs/retinal_seed42.json \
-  --checkpoint /path/to/checkpoint.pt \
-  --data-root /content/datasets/retinal
-```
-
-## Reported results
-
-The included results were produced from the best-validation-accuracy
-checkpoint for each run. Metrics are percentages.
-
-| Dataset | Seed | Accuracy | Precision | Recall | F1-score | Sensitivity | Specificity | MCC | AUC |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| BT-MRI | 42 | 99.5423 | 99.5455 | 99.5423 | 99.5418 | 99.5423 | 99.8618 | 99.3873 | 99.9947 |
-| BT-MRI | 123 | 99.4661 | 99.4668 | 99.4661 | 99.4660 | 99.4661 | 99.8283 | 99.2839 | 99.9875 |
-| BT-MRI | 456 | 99.3898 | 99.3981 | 99.3898 | 99.3898 | 99.3898 | 99.8154 | 99.1839 | 99.9950 |
-| Retinal | 42 | 95.1411 | 95.1267 | 95.1411 | 95.1251 | 95.1411 | 98.4009 | 93.5245 | 99.4711 |
-| Retinal | 123 | 94.3574 | 94.3823 | 94.3574 | 94.3392 | 94.3574 | 98.1550 | 92.4949 | 99.3067 |
-| Retinal | 456 | 93.5737 | 93.6584 | 93.5737 | 93.5477 | 93.5737 | 97.9236 | 91.4750 | 99.5019 |
-
-The combined CSV and table cover all six runs. Detailed JSON reports,
-confusion matrices, ROC/precision-recall curves for seed 42, feature maps,
-Grad-CAM, Grad-CAM++, and t-SNE figures are available in
-[`results/`](results/).
-
-![Evaluation summary](results/evaluation_cosine300/metrics_table.png)
+Evaluation also saves the full JSON/CSV metrics, confusion matrix, ROC curve,
+and precision-recall curve.
 
 ## Explainability
-
-`explain.py` creates:
-
-- Grad-CAM and Grad-CAM++ at `model.fusion.output_projection`
-- t-SNE from the 768-dimensional feature vector after global average pooling
-- a combined vertical comparison for BT-MRI and retinal images
 
 ```bash
 python explain.py \
   --bt-mri-config configs/bt_mri_seed42.json \
-  --bt-mri-checkpoint /path/to/bt_mri_best_accuracy.pt \
-  --bt-mri-data-root /content/datasets/bt_mri \
+  --bt-mri-checkpoint /path/to/bt_mri_checkpoint.pt \
+  --bt-mri-data-root /path/to/bt_mri \
   --retinal-config configs/retinal_seed42.json \
-  --retinal-checkpoint /path/to/retinal_best_accuracy.pt \
-  --retinal-data-root /content/datasets/retinal \
-  --output-dir outputs/xai
+  --retinal-checkpoint /path/to/retinal_checkpoint.pt \
+  --retinal-data-root /path/to/retinal
 ```
 
-## Intermediate feature maps
+The scripts generate Grad-CAM, Grad-CAM++, t-SNE, and intermediate feature-map
+figures.
 
-`visualize_intermediate_feature_maps.py` visualizes BiFormer blocks 2 and 4,
-intermediate and final DenseNet121/EfficientNet-B0 features, and the GAM output
-projection.
+For intermediate feature maps:
 
 ```bash
-python visualize_intermediate_feature_maps.py \
-  --bt-mri-config configs/bt_mri_seed42.json \
-  --bt-mri-checkpoint /path/to/bt_mri_best_accuracy.pt \
-  --bt-mri-data-root /content/datasets/bt_mri \
-  --retinal-config configs/retinal_seed42.json \
-  --retinal-checkpoint /path/to/retinal_best_accuracy.pt \
-  --retinal-data-root /content/datasets/retinal
+python visualize_intermediate_feature_maps.py --help
 ```
 
-The default output directory is `results/intermediate_feature_maps/`.
+## Main results
+
+| Dataset | Seed | Accuracy (%) | Precision (%) | Recall (%) | F1-score (%) | AUC (%) |
+|---|---:|---:|---:|---:|---:|---:|
+| BT-MRI | 42 | 99.5423 | 99.5455 | 99.5423 | 99.5418 | 99.9947 |
+| BT-MRI | 123 | 99.4661 | 99.4668 | 99.4661 | 99.4660 | 99.9875 |
+| BT-MRI | 456 | 99.3898 | 99.3981 | 99.3898 | 99.3898 | 99.9950 |
+| Retinal | 42 | 95.1411 | 95.1267 | 95.1411 | 95.1251 | 99.4711 |
+| Retinal | 123 | 94.3574 | 94.3823 | 94.3574 | 94.3392 | 99.3067 |
+| Retinal | 456 | 93.5737 | 93.6584 | 93.5737 | 93.5477 | 99.5019 |
+
+Full metrics, classwise reports, ROC/PR curves, confusion matrices, and XAI
+figures are available in [`results/`](results/).
 
 ## Reproducibility
 
-- Experiment seeds: 42, 123, and 456
-- DataLoader workers: 0 in the supplied configurations
-- cuDNN benchmark disabled
-- deterministic cuDNN enabled
-- TF32 disabled
-- RNG states and DataLoader generator state are stored in `last.pt`
-
-Exact results can still vary across PyTorch, CUDA, cuDNN, driver, and GPU
-versions. Record the runtime versions when reporting an experiment.
+The supplied configs use seeds 42, 123, and 456. DataLoader workers, Python,
+NumPy, PyTorch, cuDNN determinism, TF32, and checkpoint RNG states are handled
+by the project. Exact values may still vary across CUDA, cuDNN, PyTorch,
+driver, and GPU versions.
 
 ## Third-party code
 
-The repository vendors BiFormer source code. Preserve
-`third_party/BiFormer/LICENSE` and see `THIRD_PARTY_NOTICES.md` for attribution.
-
-Before publishing, choose and add a license for the original code in this
-repository. The third-party BiFormer license does not automatically license the
-rest of this project.
+BiFormer source is included under `third_party/BiFormer/`. See
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for attribution.
