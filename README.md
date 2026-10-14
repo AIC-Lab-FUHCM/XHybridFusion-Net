@@ -1,4 +1,5 @@
-# BiFormer-GAM Medical Image Classification
+# XHybridFusion-Net: Attention-Guided BiFormer and Dual-CNN Learning for Explainable Medical
+Image Classification
 
 PyTorch implementation for four-class retinal disease and brain-tumor MRI
 classification.
@@ -153,14 +154,23 @@ python visualize_intermediate_feature_maps.py --help
 
 ## Main results
 
-| Dataset | Seed | Accuracy (%) | Precision (%) | Recall (%) | F1-score (%) | AUC (%) |
-|---|---:|---:|---:|---:|---:|---:|
-| BT-MRI | 42 | 99.5423 | 99.5455 | 99.5423 | 99.5418 | 99.9947 |
-| BT-MRI | 123 | 99.4661 | 99.4668 | 99.4661 | 99.4660 | 99.9875 |
-| BT-MRI | 456 | 99.3898 | 99.3981 | 99.3898 | 99.3898 | 99.9950 |
-| Retinal | 42 | 95.1411 | 95.1267 | 95.1411 | 95.1251 | 99.4711 |
-| Retinal | 123 | 94.3574 | 94.3823 | 94.3574 | 94.3392 | 99.3067 |
-| Retinal | 456 | 93.5737 | 93.6584 | 93.5737 | 93.5477 | 99.5019 |
+### Retinal (300 Epochs)
+
+| Seed | Accuracy (%) | Precision (%) | Recall (%) | F1-score (%) | Sensitivity (%) | Specificity (%) | MCC (%) | AUC (%) |
+|:----:|-------------:|--------------:|-----------:|-------------:|----------------:|----------------:|--------:|--------:|
+| 42 | 95.14 | 95.13 | 95.14 | 95.13 | 95.14 | 98.40 | 93.52 | 99.47 |
+| 123 | 94.36 | 94.38 | 94.36 | 94.34 | 94.36 | 98.15 | 92.49 | 99.31 |
+| 456 | 93.57 | 93.66 | 93.57 | 93.55 | 93.57 | 97.92 | 91.47 | 99.50 |
+| **Mean ± std** | **94.36 ± 0.79** | **94.39 ± 0.74** | **94.36 ± 0.79** | **94.34 ± 0.79** | **94.36 ± 0.79** | **98.16 ± 0.24** | **92.49 ± 1.03** | **99.43 ± 0.10** |
+
+### BT-MRI (300 Epochs)
+
+| Seed | Accuracy (%) | Precision (%) | Recall (%) | F1-score (%) | Sensitivity (%) | Specificity (%) | MCC (%) | AUC (%) |
+|:----:|-------------:|--------------:|-----------:|-------------:|----------------:|----------------:|--------:|--------:|
+| 42 | 99.54 | 99.55 | 99.54 | 99.54 | 99.54 | 99.86 | 99.39 | 99.99 |
+| 123 | 99.47 | 99.47 | 99.47 | 99.47 | 99.47 | 99.83 | 99.28 | 99.99 |
+| 456 | 99.39 | 99.40 | 99.39 | 99.39 | 99.39 | 99.82 | 99.18 | 99.99 |
+| **Mean ± std** | **99.47 ± 0.08** | **99.47 ± 0.08** | **99.47 ± 0.08** | **99.47 ± 0.08** | **99.47 ± 0.08** | **99.84 ± 0.02** | **99.28 ± 0.11** | **99.99 ± 0.01** |
 
 Full metrics, classwise reports, ROC/PR curves, confusion matrices, and XAI
 figures are available in [`results/`](results/).
