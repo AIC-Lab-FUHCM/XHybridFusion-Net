@@ -1,0 +1,10 @@
+dataset,class,train,val,test,total
+retinal,cataract,729,150,159,1038
+retinal,diabetic_retinopathy,768,164,166,1098
+retinal,glaucoma,699,157,151,1007
+retinal,normal,751,161,162,1074
+,,,,,
+bt_mri,glioma,1057,264,300,1621
+bt_mri,meningioma,1072,267,306,1645
+bt_mri,notumor,1276,319,405,2000
+bt_mri,pituitary,1166,291,300,1757
