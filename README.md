@@ -1,5 +1,4 @@
-# XHybridFusion-Net: Attention-Guided BiFormer and Dual-CNN Learning for Explainable Medical
-Image Classification
+# XHybridFusion-Net: Attention-Guided BiFormer and Dual-CNN Learning for Explainable Medical Image Classification
 
 PyTorch implementation for four-class retinal disease and brain-tumor MRI
 classification.
