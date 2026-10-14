@@ -16,6 +16,7 @@ venv/
 # Datasets and model artifacts
 raw_data/
 datasets/
+checkpoints/
 checkpoint_qtrong*/
 outputs/
 *.pt
