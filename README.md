@@ -44,7 +44,25 @@ cd XHybridFusion-Net
 python -m pip install -r requirements.txt
 ```
 
-Experiments used PyTorch `2.11.0+cu130`, CUDA `13.0`, and an NVIDIA A100-SXM4 40 GB GPU.
+## Experiment environment
+
+The reported experiments used Google Colab with an NVIDIA A100-SXM4-40GB GPU. The main software versions are fixed in `requirements.txt` and summarized below.
+
+| Component | Version |
+|---|---|
+| Python | 3.13.15 |
+| PyTorch | 2.11.0+cu130 |
+| Torchvision | 0.26.0+cu130 |
+| CUDA | 13.0 |
+| cuDNN | 9.27.0 |
+| NumPy | 2.1.3 |
+| scikit-learn | 1.6.1 |
+| timm | 1.0.30 |
+| einops | 0.8.2 |
+| fairscale | 0.4.13 |
+| grad-cam | 1.5.7 |
+| Pillow | 11.3.0 |
+| Matplotlib | 3.10.0 |
 
 ## Data preparation
 
