@@ -30,7 +30,7 @@ model/                   BiFormer encoder, CNN branches, GAM, and classifier
 utils/                   Training, metrics, checkpoint, and configuration utilities
 third_party/BiFormer/    Included BiFormer source
 results/                 Reported tables and figures
-train.py                 Training
+main.py                  Training entry point
 evaluate.py              Test-set evaluation
 explain.py               Grad-CAM, Grad-CAM++, and t-SNE
 split_data.py            Dataset partitioning
@@ -89,8 +89,8 @@ Model weights are excluded from GitHub. The Google Drive folder link is in [chec
 ## Training
 
 ```bash
-python train.py --config configs/retinal_seed42.json
-python train.py --config configs/bt_mri_seed42.json
+python main.py --config configs/retinal_seed42.json
+python main.py --config configs/bt_mri_seed42.json
 ```
 
 Configurations are provided for seeds `42`, `123`, and `456`. During epochs 1-50, BiFormer uses learning rate `1e-4`; the CNN branches, GAM, and MLP use `1e-5`. From epoch 51, all modules use `1e-4` with cosine annealing (`T_max=250`, `eta_min=1e-6`). The checkpoint with highest validation accuracy is used for final test evaluation.
