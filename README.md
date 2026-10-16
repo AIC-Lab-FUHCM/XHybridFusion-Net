@@ -48,12 +48,31 @@ Experiments used PyTorch `2.11.0+cu130`, CUDA `13.0`, and an NVIDIA A100-SXM4 40
 
 ## Data preparation
 
-Download the raw datasets from Kaggle:
+The datasets are downloaded from Kaggle directly into `raw/`. Create a Kaggle API token at [Kaggle Settings](https://www.kaggle.com/settings) and save `kaggle.json` in `~/.kaggle/` before running the commands below. On Google Colab, upload `kaggle.json` first, then run:
 
-- [Retinal Eye Diseases](https://www.kaggle.com/datasets/gunavenkatdoddi/eye-diseases-classification): cataract, diabetic retinopathy, glaucoma, normal.
-- [Brain Tumor MRI](https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset/versions/1): glioma, meningioma, no tumor, pituitary.
+```bash
+!mkdir -p ~/.kaggle && mv kaggle.json ~/.kaggle/ && chmod 600 ~/.kaggle/kaggle.json
+```
 
-The downloaded data are raw data, not the final `train/val/test` folders. Prepare them as follows:
+```bash
+python -m pip install kaggle
+
+mkdir -p raw/retinal raw/bt_mri
+
+kaggle datasets download \
+  -d gunavenkatdoddi/eye-diseases-classification \
+  -p raw/retinal \
+  --unzip
+
+kaggle datasets download \
+  -d masoudnickparvar/brain-tumor-mri-dataset \
+  -p raw/bt_mri \
+  --unzip
+```
+
+Dataset sources: [Retinal Eye Diseases](https://www.kaggle.com/datasets/gunavenkatdoddi/eye-diseases-classification) and [Brain Tumor MRI](https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset/versions/1).
+
+The downloaded data are raw data, not the final `train/val/test` folders. Their required structures are:
 
 ```text
 raw/retinal/<class>/
